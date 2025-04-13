@@ -4,41 +4,193 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Student Management System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; font-family: 'Inter', sans-serif; box-sizing: border-box; }
-    body { background: #f9f9fb; padding: 2rem; }
-    .container { max-width: 900px; margin: auto; background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
-    nav { background: #2c5364; color: white; padding: 1rem; border-radius: 12px; }
-    nav ul { display: flex; gap: 2rem; justify-content: center; }
-    nav ul li { list-style-type: none; }
-    nav ul li a { color: white; text-decoration: none; font-weight: bold; padding: 0.5rem 1rem; border-radius: 8px; background-color: #34495e; transition: background-color 0.3s; }
-    nav ul li a:hover { background-color: #16a085; }
-    .main-content { margin-top: 3rem; text-align: center; }
-    .feature-btn { background-color: #2c5364; color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.2rem; cursor: pointer; transition: background-color 0.3s; margin: 0.5rem; }
-    .feature-btn:hover { background-color: #16a085; }
+    * { 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Poppins', sans-serif; 
+      box-sizing: border-box; 
+    }
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #64748b;
+      --accent: #0ea5e9;
+      --background: #f8fafc;
+      --white: #ffffff;
+    }
+
+    body { 
+      background: var(--background);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container { 
+      width: 100%;
+      max-width: 1000px;
+      margin: auto;
+      background: var(--white);
+      padding: 3rem;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .main-content { 
+      text-align: center;
+    }
+
+    .main-content h1 {
+      font-size: 2.5rem;
+      color: #1e293b;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .main-content p {
+      color: var(--secondary);
+      font-size: 1.1rem;
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .feature-btn { 
+      background-color: var(--white);
+      color: #1e293b;
+      padding: 1.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .feature-btn i {
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .feature-btn:hover { 
+      transform: translateY(-5px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.1);
+    }
+
+    .logo {
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      color: var(--primary);
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 2rem;
+      }
+
+      .main-content h1 {
+        font-size: 2rem;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+
+    /* Animation for content */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .animate-delay-1 {
+      animation-delay: 0.2s;
+    }
+
+    .animate-delay-2 {
+      animation-delay: 0.4s;
+    }
+
+    .animate-delay-3 {
+      animation-delay: 0.6s;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-      
-
     <div class="main-content">
-      <h1>Welcome to the Student Management System</h1>
-      <p>Choose an option below to manage student data, enter marks, or view results:</p>
+      <div class="logo animate-fade-in">
+        SMS<span>Pro</span>
+      </div>
       
-      <button class="feature-btn" onclick="window.location.href='student_list.html'">Student CRUD</button>
-      <button class="feature-btn" onclick="window.location.href='admin-login.html'">Admin Login</button>
-      <button class="feature-btn" onclick="window.location.href='mark-entry.html'">Mark Entry</button>
-      <button class="feature-btn" onclick="window.location.href='result-view.html'">Result View</button>
+      <h1 class="animate-fade-in animate-delay-1">Welcome to Student Management System</h1>
+      <p class="animate-fade-in animate-delay-1">A comprehensive solution for managing student data, marks, and results efficiently</p>
+      
+      <div class="features-grid animate-fade-in animate-delay-2">
+        <button class="feature-btn" onclick="window.location.href='student_list.html'">
+          <i class="fas fa-users"></i>
+          Student Management
+        </button>
+        <button class="feature-btn" onclick="window.location.href='admin-login.html'">
+          <i class="fas fa-user-shield"></i>
+          Admin Portal
+        </button>
+        <button class="feature-btn" onclick="window.location.href='mark-entry.html'">
+          <i class="fas fa-edit"></i>
+          Mark Entry
+        </button>
+        <button class="feature-btn" onclick="window.location.href='result-view.html'">
+          <i class="fas fa-chart-bar"></i>
+          View Results
+        </button>
+      </div>
     </div>
   </div>
 
   <script>
-    // Function to open a page in a new tab (optional, depends on your use case)
-    function openPage(page) {
-      window.location.href = page;
-    }
+    // Add hover effect sound (optional)
+    const buttons = document.querySelectorAll('.feature-btn');
+    buttons.forEach(button => {
+      button.addEventListener('mouseenter', () => {
+        if (window.navigator.vibrate) {
+          window.navigator.vibrate(50);
+        }
+      });
+    });
   </script>
 </body>
 </html>

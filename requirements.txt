@@ -1,0 +1,10 @@
+Django==5.2
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+python-dotenv==1.0.1
+Pillow==10.2.0  # For image handling
+whitenoise==6.6.0  # For serving static files
+gunicorn==21.2.0  # For production server
+django-filter==24.1  # For filtering in DRF
+markdown==3.5.2  # For browsable API docs
+pytz==2024.1  # For timezone support 
