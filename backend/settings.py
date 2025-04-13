@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'school',
+    'college',
 ]
 
 MIDDLEWARE = [
@@ -168,4 +168,4 @@ SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 
-AUTH_USER_MODEL = 'school.User'
+AUTH_USER_MODEL = 'college.User'
