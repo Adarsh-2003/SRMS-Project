@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #2c5364;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .login-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #34495e;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2c5364;
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      background: #2c5364;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background: #34495e;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      text-align: center;
+      display: none;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 1rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Admin Login</h2>
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <div id="errorMessage" class="error-message"></div>
+      <div id="loading" class="loading">Logging in...</div>
+      <button type="submit" id="loginButton">Login</button>
+    </form>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    // Check if already logged in
+    if (isAuthenticated() && isAdmin()) {
+      window.location.href = 'student_list.html';
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorMessage = document.getElementById('errorMessage');
+      const loading = document.getElementById('loading');
+      const loginButton = document.getElementById('loginButton');
+      
+      // Reset error message
+      errorMessage.style.display = 'none';
+      
+      // Show loading
+      loading.style.display = 'block';
+      loginButton.disabled = true;
+      
+      try {
+        const result = await login(username, password);
+        if (result.success) {
+          if (isAdmin()) {
+            window.location.href = 'student_list.html';
+          } else {
+            errorMessage.textContent = 'Access denied. Admin privileges required.';
+            errorMessage.style.display = 'block';
+            localStorage.removeItem('userData');
+          }
+        } else {
+          errorMessage.textContent = result.error;
+          errorMessage.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        errorMessage.textContent = 'An error occurred during login. Please try again.';
+        errorMessage.style.display = 'block';
+      } finally {
+        // Hide loading
+        loading.style.display = 'none';
+        loginButton.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
