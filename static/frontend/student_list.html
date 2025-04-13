@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f4f6f9;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      color: #2c3e50;
+    }
+
+    .btn {
+      padding: 0.6rem 1.2rem;
+      background-color: #2c5364;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    .action-btns button {
+      margin-right: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .edit-btn {
+      background-color: #f39c12;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .modal-actions button {
+      margin-left: 1rem;
+    }
+    
+    .logout-btn {
+      background-color: #e74c3c;
+      margin-right: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Student Management</h2>
+      <div>
+        <button class="btn logout-btn" onclick="logout()">Logout</button>
+        <button class="btn" onclick="openModal()">➕ Add Student</button>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Roll No</th>
+          <th>Class</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="studentTable">
+        <!-- Rows will be inserted by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="studentModal">
+    <div class="modal-content">
+      <h3 id="modalTitle">Add Student</h3>
+      <form id="studentForm">
+        <input type="hidden" id="studentId" />
+        <div class="form-group">
+          <label for="name">Student Name</label>
+          <input type="text" id="name" required />
+        </div>
+        <div class="form-group">
+          <label for="roll">Roll Number</label>
+          <input type="text" id="roll" required />
+        </div>
+        <div class="form-group">
+          <label for="class">Class</label>
+          <input type="text" id="class" required />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    // Check authentication
+    if (!isAuthenticated()) {
+      window.location.href = 'admin-login.html';
+    }
+    
+    // Check if user is admin
+    if (!isAdmin()) {
+      window.location.href = 'result-view.html';
+    }
+
+    const studentTable = document.getElementById('studentTable');
+    const studentModal = document.getElementById('studentModal');
+    const studentForm = document.getElementById('studentForm');
+    const modalTitle = document.getElementById('modalTitle');
+
+    const nameInput = document.getElementById('name');
+    const rollInput = document.getElementById('roll');
+    const classInput = document.getElementById('class');
+    const studentId = document.getElementById('studentId');
+
+    // Load students from API
+    async function loadStudents() {
+      try {
+        const students = await getStudents();
+        renderTable(students);
+      } catch (error) {
+        console.error('Error loading students:', error);
+        alert('Failed to load students. Please try again.');
+      }
+    }
+
+    function renderTable(students) {
+      studentTable.innerHTML = '';
+      students.forEach((student) => {
+        const row = `<tr>
+          <td>${student.name}</td>
+          <td>${student.roll_number}</td>
+          <td>${student.class_name}</td>
+          <td class="action-btns">
+            <button class="edit-btn" onclick="editStudent(${student.id})">Edit</button>
+            <button class="delete-btn" onclick="deleteStudent(${student.id})">Delete</button>
+          </td>
+        </tr>`;
+        studentTable.innerHTML += row;
+      });
+    }
+
+    function openModal(edit = false) {
+      studentModal.classList.add('active');
+      if (!edit) {
+        modalTitle.innerText = 'Add Student';
+        studentForm.reset();
+        studentId.value = '';
+      }
+    }
+
+    function closeModal() {
+      studentModal.classList.remove('active');
+    }
+
+    async function editStudent(id) {
+      try {
+        const students = await getStudents();
+        const student = students.find(s => s.id === id);
+        
+        if (student) {
+          openModal(true);
+          modalTitle.innerText = 'Edit Student';
+          nameInput.value = student.name;
+          rollInput.value = student.roll_number;
+          classInput.value = student.class_name;
+          studentId.value = student.id;
+        }
+      } catch (error) {
+        console.error('Error loading student details:', error);
+        alert('Failed to load student details. Please try again.');
+      }
+    }
+
+    async function deleteStudent(id) {
+      if (confirm('Are you sure you want to delete this student?')) {
+        try {
+          await deleteStudent(id);
+          loadStudents();
+        } catch (error) {
+          console.error('Error deleting student:', error);
+          alert('Failed to delete student. Please try again.');
+        }
+      }
+    }
+
+    studentForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const name = nameInput.value.trim();
+      const roll = rollInput.value.trim();
+      const studentClass = classInput.value.trim();
+      const id = studentId.value;
+
+      const studentData = { 
+        name, 
+        roll_number: roll, 
+        class_name: studentClass 
+      };
+
+      try {
+        if (id === '') {
+          await createStudent(studentData);
+        } else {
+          await updateStudent(id, studentData);
+        }
+
+        loadStudents();
+        closeModal();
+      } catch (error) {
+        console.error('Error saving student:', error);
+        alert('Failed to save student. Please try again.');
+      }
+    });
+
+    // Initial load
+    loadStudents();
+  </script>
+</body>
+</html>
